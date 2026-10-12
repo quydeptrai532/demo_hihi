@@ -21,20 +21,26 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Check syntax (Compile)
-        run: mvn compile
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant permission
+        run: chmod +x gradlew
+
+      - name: Check syntax
+        run: ./gradlew compileJava
 
       - name: Build
-        run: mvn package -DskipTests
+        run: ./gradlew classes
 
       - name: Test
-        run: mvn test
+        run: ./gradlew test
 
       - name: Package
-        run: mvn package
+        run: ./gradlew bootJar
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
           name: spring-boot-app
-          path: target/*.jar
+          path: build/libs/*.jar
